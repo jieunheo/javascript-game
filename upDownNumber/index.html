@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Up Down Game</title>
+
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <h1 class="h1">Up Down Game</h1>
+    </header>
+    <main class="main">
+      <div class="ready">
+        <p class="description">1~60 사이의 숫자를 맞추세요!</p>
+        <button id="startBtn">게임 시작</button>
+      </div>
+
+      <div class="start hidden">
+        <h2 class="h2">남은 기회 <span id="myCount">5</span>회</h2>
+        <div class="form">
+          <input type="text" id="myNum">
+          <button id="putNumberBtn">정답!</button>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const ready = document.querySelector('.ready');
+    const start = document.querySelector('.start');
+    const myCount = document.querySelector('#myCount');
+
+    let number;
+    let count = 5;
+    let num;
+    const gameStart = () => {
+      ready.classList.add('hidden');
+      start.classList.remove('hidden');
+
+      number = Math.round(Math.random() * 60);
+    }
+
+    const getValue = (event) => {
+      num = event.target.value;
+    }
+
+    const putNumber = () => {
+      if(num > 60) {
+        alert(`60 넘는 수는 없지롱`);
+        myNum.value = '';
+        myNum.focus();
+        
+        return;
+      }
+
+      if(number > num) {
+        alert(`UP`);
+      } else if(number == num) {
+        alert(`정답! ${number}`);
+        ready.classList.remove('hidden');
+        start.classList.add('hidden');
+
+        reset();
+        return;
+      } else {
+        alert(`DOWN`);
+      }
+      
+      count--;
+      if(count == 0) {
+        alert(`기회 초과! 정답은 ${number}`);
+        ready.classList.remove('hidden');
+        start.classList.add('hidden');
+        window.location.reload();
+
+        reset();
+        return;
+      }
+      
+      myCount.textContent = count;
+
+      myNum.value = '';
+      myNum.focus();
+    }
+
+    const reset = () => {
+      count = 5;
+      myNum.value = '';
+      myNum.focus();
+    }
+
+    const startBtn = document.querySelector('#startBtn');
+    startBtn.addEventListener('click', gameStart);
+
+    const myNum = document.querySelector('#myNum');
+    myNum.addEventListener('input', getValue);
+    const putNumberBtn = document.querySelector('#putNumberBtn');
+    putNumberBtn.addEventListener('click', putNumber);
+  </script>
+</body>
+</html>
