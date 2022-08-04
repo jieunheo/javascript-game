@@ -1,0 +1,122 @@
+html, body, h1, h2, p, ul, li {
+  padding: 0;
+  margin: 0;
+}
+
+div {
+  box-sizing: border-box;
+}
+
+ul, li {
+  list-style: none;
+}
+
+body {
+  background-color: aliceblue;
+}
+
+.hidden {
+  display: none;
+}
+
+.container {
+  text-align: center;
+}
+
+.title {
+  padding: 30px;
+}
+
+.member {
+  margin-bottom: 20px;
+}
+
+.header {
+  border: 3px solid #fff;
+  border-radius: 24px;
+  padding: 30px;
+  margin-left: auto;
+  margin-right: auto;
+  width: 80%;
+  max-width: 350px;
+  margin-bottom: 30px;
+}
+
+.wordContent, .orderContent {
+  margin-bottom: 16px;
+}
+
+.word {
+  font-weight: 700;
+}
+
+.form {
+  display: flex;
+  justify-content: center;
+}
+
+.form .text, .form .btn, .startBtn {
+  border: 0;
+  padding: 15px 20px;
+}
+
+.form .text {
+  border-radius: 8px 0 0 8px;
+}
+
+.form .btn {
+  border-radius: 0 8px 8px 0;
+  background-color: cadetblue;
+  color: #fff;
+}
+
+.wordlist {
+  width: 80%;
+  max-width: 350px;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
+.wordlist li {
+  font-size: 1.2rem;
+  background-color: #fff;
+  padding: 30px;
+  border-radius: 8px;
+}
+
+.wordlist li + li {
+  margin-top: 20px;
+}
+
+.description {
+  margin-bottom: 40px;
+}
+
+.startBtn {
+  position: relative;
+  width: 180px;
+  background-color: cadetblue;
+  border-radius: 16px;
+  color: #fff;
+
+  overflow: hidden;
+}
+
+.startBtn::before {
+  position: absolute;
+  top: 0;
+  left: -10px;
+
+  content: '';
+  display: block;
+  width: 10px;
+  height: 100%;
+  background-color: #fff;
+  transition: .2s all;
+  filter: blur(2px);
+}
+
+.startBtn:hover::before {
+  left: calc(100% + 10px)
+}

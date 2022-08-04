@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Word Game</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div class="container">
+    <div class="start hidden">
+      <h1 class="title">Word Game</h1>
+      <h2 id="member" class="member"></h2>
+      <div class="header">
+        <div class="wordContent">제시어: <span id="word" class="word"></span></div>
+        <div class="orderContent"><span id="order">1</span>번째 참가자</div>
+        <div class="form">
+          <input class="text" type="text">
+          <button class="btn writeBtn" type="button">입력</button>
+        </div>
+      </div>
+      <ul id="wordlist" class="wordlist"></ul>
+    </div>
+    <div class="ready">
+      <h1 class="title">Word Game</h1>
+      <p class="description">우리 함께 끝말잇기 게임을 해 봅시다.</p>
+      <button class="btn startBtn" type="button">방 만들기</button>
+    </div>
+  </div>
+
+  <script>
+    const ready = document.querySelector('.ready');
+    const start = document.querySelector('.start');
+    let memberNum;
+    const startGame = () => {
+      const memberStr = prompt('게임 시작! 몇 명이 참가하나요?');
+      memberNum = Number(memberStr);
+
+      if(memberStr == null || memberStr == '' || !Number.isInteger(memberNum)) {
+        alert(`방만들기에 실패하였습니다.`);
+        return;
+      }
+
+      const $member = document.querySelector('#member');
+      $member.innerHTML = `방 인원 총 ${memberStr}명!`;
+
+      start.classList.remove('hidden');
+      ready.classList.add('hidden');
+    }
+
+    const $startBtn = document.querySelector('.startBtn');
+    const $writeBtn = document.querySelector('.writeBtn');
+    const $input = document.querySelector('input');
+    const $word = document.querySelector('#word');
+    const $order = document.querySelector('#order');
+    const wordlist = document.querySelector('#wordlist');
+    
+    let word; // 제시어
+    let newWord; // 현재 단어
+    let allWord = []; //전체 단어
+    
+    const onClickButton = () => {
+      if (!word || word[word.length - 1] === newWord[0]) { // 제시어가 비어 있거나 올바른 단어인가?
+        if(newWord.length !== 3) {
+          alert(`단어는 세글자로 입력해주세요.`);
+        } else if(allWord.indexOf(newWord) > -1) {
+          alert(`이미 사용한 단어입니다!`);
+        } else {
+          const li = document.createElement('li');
+          li.innerText = newWord;
+          wordlist.prepend(li);
+          
+          allWord.push(newWord);
+          
+          const order = Number($order.textContent);
+          if (order + 1 > memberNum) {
+            $order.textContent = 1;
+          } else {
+            $order.textContent = order + 1;
+          }
+          word = newWord; // 입력한 단어가 제시어가 w된다.
+          $word.textContent = word; // 화면에 제시어 표시
+        }
+      } else {
+        alert(`땡! 게임 끝!! ${$order.textContent}번째 참가자 탈락!`);
+        window.location.reload();
+      }
+      $input.value = '';
+      $input.focus();
+    };
+
+    const onInput = (event) => {
+      newWord = event.target.value; // 입력하는 단어를 현재 단어로
+    };
+
+    const onChange = (event) => {
+      console.log(event);
+    }
+
+    $startBtn.addEventListener('click', startGame);
+    $writeBtn.addEventListener('click', onClickButton);
+    $input.addEventListener('input', onInput);
+  </script>
+</body>
+</html>
