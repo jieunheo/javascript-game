@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gard Game</title>
+
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <!-- 시작 화면 -->
+  <div class="container">
+    <h1>Gard Game</h1>
+    <div id="start">
+      <p>카드 짝 맞추기 게임</p>
+      <input id="number" min="2" max="20" step="2" required type="number" placeholder="2~20">
+      <button id="start-btn">시작</button>
+    </div>
+  
+    <div id="game">
+      <div id="timer"></div>
+      <div id="wrapper"></div>
+      <div id="result"></div>
+    </div>
+  </div>
+
+  <script>
+    // 화면
+    const $number = document.querySelector('#number');
+    const $start  = document.querySelector('#start');
+    const $result = document.querySelector('#result');
+    const $timer  = document.querySelector('#timer');
+
+    const $wrapper = document.querySelector('#wrapper');
+
+    let total;
+    const colors = [
+      'red', 'orange', 'yellow', 'green', 'white',
+      'pink', 'cyan', 'violet', 'gray', 'black'
+    ];
+    // let colorCopy = colors.concat(colors);
+    let colorSlice = colors.slice(0, total / 2);
+    let colorCopy = colorSlice.concat(colorSlice);
+    let shuffled  = []; // 섞은 전체 카드
+    let clicked   = []; // 클릭 카드
+    let completed = []; // 성공 카드
+    let clickable = false;
+
+    let startTime;
+
+    function shuffle() { // 피셔-예이츠 셔플
+      colorSlice = colors.slice(0, total / 2);
+      colorCopy = colorSlice.concat(colorSlice);
+
+      for (let i = 0; colorCopy.length > 0; i += 1) {
+        const randomIndex = Math.floor(Math.random() * colorCopy.length);
+        shuffled = shuffled.concat(colorCopy.splice(randomIndex, 1));
+
+      }
+    }
+
+    function createCard(i) {
+      const card = document.createElement('div');
+      card.className = 'card'; // .card 태그 생성
+
+      const cardInner = document.createElement('div');
+      cardInner.className = 'card-inner'; // .card-inner 태그 생성
+
+      const cardFront = document.createElement('div');
+      cardFront.className = 'card-front'; // .card-front 태그 생성
+
+      const cardBack = document.createElement('div');
+      cardBack.className = 'card-back'; // .card-back 태그 생성
+      cardBack.style.backgroundColor = shuffled[i];
+
+      cardInner.appendChild(cardFront);
+      cardInner.appendChild(cardBack);
+      card.appendChild(cardInner);
+
+      return card;
+    }
+
+    function startGame() {
+      if($number.value === '') {
+        alert(`게임을 위한 카드 수를 선택해주세요`);
+        $number.focus();
+        return;
+      }
+      
+      total = $number.value;
+      $result.innerHTML = `0/${total}`;
+
+      $start.classList.add('hidden');
+      shuffle();
+
+      for (let i = 0; i < total; i += 1) {
+        const card = createCard(i);
+        card.addEventListener('click', onCardClick)
+        $wrapper.appendChild(card);
+
+      }
+      allCardOpen();
+    }
+
+    function onCardClick () {
+      if (!clickable || completed.includes(this) || clicked[0] === this) {
+        return;
+      }
+
+      this.classList.toggle('flipped');
+      clicked.push(this);
+      
+      if(clicked.length !== 2) {
+        return;
+      }
+      
+      clickable = false;
+      const firstBackColor  = clicked[0].querySelector('.card-back').style.backgroundColor;
+      const secondBackColor = clicked[1].querySelector('.card-back').style.backgroundColor;
+      
+      // 두 카드가 같은 카드면
+      if (firstBackColor === secondBackColor) {
+        completed.push(clicked[0]);
+        completed.push(clicked[1]);
+        clicked = [];
+        $result.innerHTML = `${completed.length}/${total}`;
+  
+        if(completed.length === parseInt(total)) {
+          const endTime = new Date();
+          setTimeout(() => {
+            $result.innerHTML = $result.innerHTML + `<p>축하합니다! ${(endTime - startTime) / 1000}초</p>`;
+            $result.append(button);
+            $wrapper.querySelectorAll('.card').removeEventListener('click', onCardClick);
+            return;
+
+          }, 2000);
+        }
+        clickable = true;
+        return;
+      }
+
+      // 두 카드가 다르면
+      setTimeout(() => {
+        clicked[0].classList.remove('flipped');
+        clicked[1].classList.remove('flipped');
+        clicked = [];
+        clickable = true;
+
+      }, 1000);
+    }
+
+    function resetGame() {
+      $wrapper.innerHTML = '';
+      colorSlice = colors.slice(0, total / 2);
+      colorCopy = colorSlice.concat(colorSlice);
+      shuffled = [];
+      completed = [];
+
+      startGame();
+    }
+
+    // 초반 카드 공개
+    const allCardOpen = () => {
+      document.querySelectorAll('.card').forEach((card, index) => {
+        setTimeout(() => { // 카드 보여주기
+          card.classList.add('flipped');
+
+        }, 1000 + 100 * index);
+
+        setTimeout(() => { // 카드 감추기
+          document.querySelectorAll('.card').forEach((card) => {
+            card.classList.remove('flipped');
+            clickable = true;
+          });
+          startTime = new Date();
+        }, 5000);
+      });
+    }
+    
+
+    const $startBtn = document.querySelector('#start-btn');
+    $startBtn.addEventListener('click', startGame);
+    const button = document.createElement('button');
+    button.addEventListener('click', resetGame);
+    button.textContent = '다시하기';
+  </script>
+</body>
+</html>
