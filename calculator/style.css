@@ -1,0 +1,68 @@
+* {
+  box-sizing: border-box;
+}
+
+html, body, h1, h2, p, input, button {
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  width: 300px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.h1 {
+  text-align: center;
+  padding: 30px;
+}
+
+.result {
+  display: flex;
+  align-items: stretch;
+}
+
+.result input {
+  border: none;
+  background: linear-gradient(180deg, #282828, #575757);
+  color: #fff;
+}
+
+#result {
+  width: 75%;
+  height: 50px;
+  text-align: right;
+}
+
+#operator {
+  width: 25%;
+  height: 50px;
+  text-align: center;
+}
+
+.rows {
+  display: flex;
+  align-items: stretch;
+}
+
+button {
+  width: 25%;
+  height: 50px;
+
+  border: 0;
+  background: linear-gradient(45deg, #474747, #878787);
+  color: #fff;
+}
+
+button:not([id^='num']) {
+  background: linear-gradient(45deg, #282828, #575757);
+}
+
+button[id^='clear'] {
+  background: linear-gradient(45deg, #9f2727, #d55959);
+}
+
+button:hover {
+  background: linear-gradient(45deg, rgb(105, 169, 172), rgb(145, 208, 211));
+}
