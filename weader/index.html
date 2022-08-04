@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hello Weather</title>
+
+  <script>
+    // 윈도우 로드 시 진행
+    window.addEventListener('load', () => { 
+      // geolocation을 지원하는지 확인
+      if(window.navigator.geolocation) {
+        window.navigator.geolocation.getCurrentPosition(successCallback,errorCallback)
+      }
+
+      // 야간모드
+      const container = document.querySelector('#container');
+      const nightMode = document.querySelector('#nightMode');
+      const nightLabel = document.querySelector('#nightLabel span');
+      nightMode.addEventListener('change', (event) => {
+        console.log(nightMode.checked);
+        if(nightMode.checked) {
+          container.classList.add('nightMode');
+          nightLabel.innerHTML = 'OFF';
+        } else {
+          container.classList.remove('nightMode');
+          nightLabel.innerHTML = 'ON';
+        };
+      })
+    });
+
+    // 위치 확인 가능한 경우
+    const successCallback = (event) => {
+      // 위/경도
+      const latitude  = event.coords.latitude   // 위도
+      const longitude = event.coords.longitude  // 경도
+      document.querySelector("#latitude").textContent = latitude
+      document.querySelector("#longitude").textContent = longitude 
+
+      //api
+      const key = `0648eafdb8b8d58881cc1d0aa104c990`;
+      const weatherUrl = "https://api.openweathermap.org/data/2.5/weather?lat=" + latitude
+                    + "&lon=" + longitude
+                    + "&appid=" + key;
+
+      const options = { method: 'GET' }
+
+      // fetch
+      fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=${key}`)
+        .then((response) => {
+          console.log(response);
+          return response.json();
+        })
+        .then((data) => {
+          console.log(data);
+
+          const icon = data.weather[0].icon;
+          const iconUrl = "http://openweathermap.org/img/wn/" + icon + "@2x.png";
+          const img = document.querySelector("#wicon");
+          img.src = iconUrl;
+
+          const name = data.name;
+          const city = document.querySelector("#city");
+          city.innerHTML = name;
+
+          document.querySelector("#tempr").textContent = Math.round(data.main.temp - 273) // 현재 온도
+        })
+        .catch((error) => {
+          city.innerHTML = error;
+          city.classList.add('error');
+        });
+    }
+
+    const errorCallback = (event) => {
+      alert("위치 정보를 얻을 수 없습니다.")
+    };
+  </script>
+
+  <style>
+    html, body, header, main, h1, h2, p, img {
+      padding: 0;
+      margin: 0;
+    }
+
+    .container {
+      height: 100vh;
+      color: steelblue;
+      text-align: center;
+    }
+    .nightMode {
+      background-color: #282828;
+      color: #fff;
+    }
+
+    .header {
+      padding: 3rem;
+    }
+    .main {
+      margin-left: auto;
+      margin-right: auto;
+      margin-bottom: 20px;
+      width: 300px;
+      padding: 1.5em;
+      border: 2px solid steelblue;
+      border-radius: 16px;
+    }
+    .nightMode .main {
+      border: 2px solid #fff;
+    }
+    .city {
+      font-size: 2rem;
+      margin-bottom: 20px;
+    }
+    .location {
+      font-size: .8rem;
+    }
+    .weater img {
+      width: 50%;
+    }
+    .weater .tempr {
+      font-size: 2rem;
+    }
+
+    .mode span {
+      font-weight: 700;
+    }
+    .mode input[type=checkbox] {
+      appearance: none;
+    }
+    
+    .error {
+      font-size: 1.5rem;
+      color: crimson;
+    }
+  </style> 
+</head>
+<body>
+  <div class="container" id="container">
+    <header class="header">
+      <h1>Hello Weather!</h1>
+    </header>
+    <main class="main">
+      <div>
+        <h2 class="city" id="city"></h2>
+        <p class="location">
+          <span id="latitude"></span>
+          <span id="longitude"></span>
+        </p>
+      </div>
+      <div class="weater">
+        <img id="wicon" src="" />
+        <p class="tempr" id="tempr"></p>
+      </div>
+    </main>
+    <footer>
+      <form class="mode">
+        <input type="checkbox" name="nightMode" id="nightMode">
+        <label for="nightMode" id="nightLabel">야간모드 <span>ON</span></label>
+      </form>
+    </footer>
+  </div>  
+</body>
+</html>
