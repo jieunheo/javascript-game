@@ -1,0 +1,107 @@
+html, body, header, main, h1, h2, p, img {
+  padding: 0;
+  margin: 0;
+}
+
+ul, li {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+input, button {
+  border: none;
+}
+
+body {
+  /* background-color: rgb(235, 250, 255); */
+  background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+	background-size: 500% 500%;
+	animation: gradient 15s ease infinite;
+  height: 100vh;
+  text-align: center;
+}
+
+.header {
+  color: #fff;
+  padding: 3rem;
+}
+
+.main form {
+  display: flex;
+  justify-content: center;
+}
+.main input {
+  padding: 15px 20px;
+  min-width: 300px;
+  border-top-left-radius: 20px;
+}
+.main button {
+  padding: 15px 20px;
+  background: linear-gradient(-45deg, #23d5ab, #23a6d5, #e73c7e, #ee7752);
+	background-size: 400% 400%;
+	animation: gradient 15s ease infinite;
+  color: #fff;
+  border-bottom-right-radius: 20px;
+}
+.main button:hover {
+  background-color: rgb(75, 132, 155);
+}
+
+@keyframes gradient {
+  0% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
+}
+
+
+/******** 결과 화면 ********/
+.main > a {
+  display: inline-block;
+  text-decoration: none;;
+  padding: 15px 20px;
+  background: linear-gradient(-45deg, #23d5ab, #23a6d5, #e73c7e, #ee7752);
+	background-size: 400% 400%;
+  animation: gradient 15s ease infinite;
+  color: #fff;
+  border-top-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+
+  margin-bottom: 20px;
+}
+
+.movieList {
+  width: 80%;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  align-items: stretch;
+}
+
+.movie {
+  background-color: #fff;
+  width: 70%;
+  max-width: 300px;
+  border-radius: 16px;
+  margin-bottom: 20px;
+  padding: 30px 20px;
+}
+
+.movie img {
+  width: 70%;
+  margin-bottom: 16px;
+}
+.movie .title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
