@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rock Paper Scissors</title>
+
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <h1 class="h1">Rock Paper Scissors</h1>
+    </header>
+    <main class="main">
+      <div class="ready">
+        <p class="description">주먹 가위 보!!</p>
+        <button id="startBtn">게임 시작</button>
+      </div>
+
+      <div class="start hidden">
+        <h2 class="h2">컴퓨터</h2>
+        <div id="computer"></div>
+        <div class="buttons">
+          <button id="scissors">가위</button>
+          <button id="rock">바위</button>
+          <button id="paper">보</button>
+        </div>
+        <div class="result"></div>
+        <div id="score">0 : 0</div>
+        <div class="end"></div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const $ready = document.querySelector('.ready');
+    const $start = document.querySelector('.start');
+    const $end = document.querySelector('.end');
+    const $result = document.querySelector('.result');
+
+    const $computer = document.querySelector('#computer');
+    const $score = document.querySelector('#score');
+
+    const $scissors = document.querySelector('#scissors');
+    const $rock = document.querySelector('#rock');
+    const $paper = document.querySelector('#paper');
+
+    const IMG_URL = './rsp.png';
+    $computer.style.background = `url(${IMG_URL}) 0 0 no-repeat`;
+    $computer.style.backgroundSize = 'auto 200px';
+
+    const rspX = {
+      scissors: '0', // 가위
+      rock: '-220', // 주먹
+      paper: '-440' // 보
+    }
+
+    let computerChoice = '0';
+    let changeInterval;
+    const changeComputerHand = () => {
+      if(computerChoice === rspX.scissors) {
+        computerChoice = rspX.rock;
+      } else if(computerChoice === rspX.rock) {
+        computerChoice = rspX.paper;
+      } else if(computerChoice === rspX.paper) {
+        computerChoice = rspX.scissors;
+      }
+      $computer.style.background = `url(${IMG_URL}) ${computerChoice}px 0 no-repeat`;
+      $computer.style.backgroundSize = 'auto 200px';
+    }
+
+    let clickable = true;
+    const reset = () => {
+      computerScore = 0;
+      myScore = 0;
+      $score.textContent = `0 : 0`;
+      $end.innerHTML = '';
+      $result.innerHTML = '';
+      clickable = true;
+    }
+    
+    const startGame = () => {
+      $ready.classList.add('hidden');
+      $start.classList.remove('hidden');
+      changeInterval = setInterval(changeComputerHand, 80);
+      reset();
+    }
+
+    let computerScore = 0;
+    let myScore = 0;
+    const scoreTable = {
+      '0': 0,
+      '-220': 1,
+      '-440': -1
+    }
+
+    const clickButton = (event) => {
+      if(clickable) {
+        clearInterval(changeInterval);
+        clickable = false;
+        // 점수 계산 및 화면 표시
+        const myChoice = event.target.textContent === '가위'
+          ? rspX.scissors
+          : event.target.textContent === '바위'
+            ? rspX.rock
+            : rspX.paper
+
+        const myS = scoreTable[myChoice];
+        const computerS = scoreTable[computerChoice];
+        const diff = myS - computerS;
+        let message;
+        if([-2, 1].includes(diff)) { // 사용자가 이겼을 때
+          myScore++;
+          message = `이겼다!`;
+        } else if ([2, -1].includes(diff)) { // 사용자가 졌을 때
+          computerScore++;
+          message = `졌다!`;
+        } else {// 0: 비겼을 때
+          message = `비겼다!`;
+        }
+        $result.innerHTML = message;
+        
+        $score.textContent = `${computerScore} : ${myScore}`;
+        if(computerScore >= 3 || myScore >= 3) {
+          if(computerScore >= 3) {
+            $result.innerHTML = `컴퓨터 승리!`;
+          }else {
+            $result.innerHTML = `사용자 승리`;
+          }
+          const replayBtn = document.createElement('button');
+          replayBtn.innerHTML = '다시 시작';
+          replayBtn.addEventListener('click', startGame);
+          $end.append(replayBtn);
+          return;
+        }
+        setTimeout(() => {
+          clickable = true;
+          changeInterval = setInterval(changeComputerHand, 80);
+        }, 1000);
+      }
+    }
+
+    const startBtn = document.querySelector('#startBtn');
+    startBtn.addEventListener('click', startGame)
+
+    $scissors.addEventListener('click', clickButton);
+    $rock.addEventListener('click', clickButton);
+    $paper.addEventListener('click', clickButton);
+  </script>
+</body>
+</html>
