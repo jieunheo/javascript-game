@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lotto</title>
+
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <h1 class="h1">Lotto</h1>
+    </header>
+    <main class="main">
+      <div class="ready">
+        <p class="description">1~45 사이의 숫자로 로또를 만들어봅시다!</p>
+        <button id="startBtn">추첨 시작</button>
+      </div>
+
+      <div class="start hidden">
+        <h2 class="h2">추첨 결과</h2>
+        <div id="result">추첨 번호: </div>
+        <div id="bonus">보너스: </div>
+        <div id="button"></div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const $ready = document.querySelector('.ready');
+    const $start = document.querySelector('.start');
+
+    const $result = document.querySelector('#result');
+    const $bonus = document.querySelector('#bonus');
+
+    const $button = document.querySelector('#button');
+
+    function drawBall(number, $parent) {
+      const $ball = document.createElement('div');
+      $ball.className = 'ball';
+      $ball.textContent = number;
+      if(number < 10) {
+        $ball.classList.add('ball_1');
+      } else if(number < 20) {
+        $ball.classList.add('ball_2');
+      } else if(number < 30) {
+        $ball.classList.add('ball_3');
+      } else {
+        $ball.classList.add('ball_4');
+      }
+      $parent.appendChild($ball);
+    }
+    
+    let candidate;
+    let shuffle = [];
+    let winBalls;
+    let bonus;
+
+    const reset = () => {
+      $button.innerHTML = '';
+      $result.textContent = '추첨 번호: ';
+      $bonus.textContent = '보너스: ';
+      candidate = Array(45).fill().map((v, i) => i + 1);
+      shuffle = [];
+      winBalls = null;
+      bonus = null;
+    }
+
+    const startLotto = () => {
+      $ready.classList.add('hidden');
+      $start.classList.remove('hidden');
+      reset();
+      
+      while (candidate.length > 0) {
+        const random = Math.floor(Math.random() * candidate.length); // 무작위 인덱스 뽑기
+        const spliceArray = candidate.splice(random, 1); // 뽑은 값은 배열에 들어 있음
+        const value = spliceArray[0]; // 배열에 들어 있는 값을 꺼내어
+        shuffle.push(value); // shuffle 배열에 넣기
+      }
+      console.log(shuffle);
+      
+      winBalls = shuffle.slice(0, 6).sort((a, b) => a - b);
+      bonus = shuffle[6];
+      for (let i = 0; i < winBalls.length; i++) {
+        setTimeout(() => {
+          drawBall(winBalls[i], $result);
+        }, 1000 * (i + 1));
+      }
+
+      setTimeout(() => {
+        drawBall(bonus, $bonus);
+      }, 7000);
+
+      setTimeout(() => {
+        const button = document.createElement('button');
+        button.innerHTML = '다시 추첨';
+        button.addEventListener('click', startLotto);
+        $button.append(button);
+      }, 8000);
+    }
+    const startBtn = document.querySelector('#startBtn');
+    startBtn.addEventListener('click', startLotto)
+  </script>
+</body>
+</html>
