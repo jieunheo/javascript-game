@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tic Tac Toe</title>
+
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <h1 class="h1">Tic Tac Toe</h1>
+    </header>
+    <main class="main">
+      <div class="ready">
+        <p class="description">틱텍토! 컴퓨터를 이겨라!</p>
+        <button class="startOneBtn">혼자 하기</button>
+        <button class="startTwoBtn">둘이 하기</button>
+      </div>
+
+      <div class="start hidden">
+        <div id="result"></div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const $ready = document.querySelector('.ready');
+    const $start = document.querySelector('.start');
+
+    let turn = 'O';
+    let rows = [];
+    let isOne = null;
+
+    const checkWinner = (target) => {
+      let rowIndex;
+      let cellIndex;
+
+      // 현재 클릭 위치 target으로 찾기
+      // console.log(`row: ${target.parentNode.rowIndex}`);
+      // console.log(`cell: ${target.cellIndex}`);
+
+      // 현재 클릭 위치 forEach로 찾기
+      rows.forEach((row, ri) => {
+        row.forEach((cell, ci) => {
+          if (cell === target) {
+            rowIndex = ri;
+            cellIndex = ci;
+          }
+        });
+      });
+
+      // 승리 여부 확인
+      let hasWinner = false;
+      // 가로줄 검사
+      if (
+        rows[rowIndex][0].textContent === turn &&
+        rows[rowIndex][1].textContent === turn &&
+        rows[rowIndex][2].textContent === turn
+      ) {
+        hasWinner = true;
+      }
+      // 세로줄 검사
+      if (
+        rows[0][cellIndex].textContent === turn &&
+        rows[1][cellIndex].textContent === turn &&
+        rows[2][cellIndex].textContent === turn
+      ) {
+        hasWinner = true;
+      }
+      // 대각선 검사
+      if ( // \방향
+        rows[0][0].textContent === turn &&
+        rows[1][1].textContent === turn &&
+        rows[2][2].textContent === turn
+      ) {
+        hasWinner = true;
+      }
+      if ( // /방향
+        rows[0][2].textContent === turn &&
+        rows[1][1].textContent === turn &&
+        rows[2][0].textContent === turn
+      ) {
+        hasWinner = true;
+      }
+      return hasWinner;
+    };
+
+    // td 클릭 시 실행할 함수
+    let computer;
+    let clickable = true;
+    const callback = (event) => {
+      if (!clickable) return;
+
+      // 비어있지 않은 칸인 경우 return
+      if(event.target.innerText !== '') return;
+
+      // 비어있으면 값 넣기
+      event.target.textContent = turn;
+      
+      // 승리여부 받아오기
+      const result = checkWinnerAndDraw(event.target);
+      if(result) return;
+      clickable = true;
+      turn = turn === 'X' ? 'O' : 'X';
+
+      // 혼자하는 게임인 경우
+      if(this.isOne === 0 && turn === 'X') {
+        clickable = false;
+
+        const emptyCells = rows.flat().filter((v) => !v.textContent);
+        const randomCell = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+        if(!randomCell) return;
+
+        computer = setTimeout(() => {
+          randomCell.textContent = 'X';
+          const result = checkWinnerAndDraw(randomCell);
+          if(result) return;
+          clickable = true;
+        }, Math.round(Math.random() * 500) + 500);
+        turn = turn === 'X' ? 'O' : 'X';
+      }
+    }
+
+    const checkWinnerAndDraw = (myCell) => {
+      const hasWinner = checkWinner(myCell);
+      // 승자가 있으면
+      if (hasWinner) {
+        end(`${turn}님이 승리!`);
+        return true;
+      }
+      // 승자가 없으면
+      const draw = rows.flat().every((cell) => cell.textContent);
+      if (draw) {
+        end('무승부');
+        return true;
+      }
+      return false;
+    }
+
+    const end = (text) => {
+      const $result = document.createElement('div');
+      $result.classList.add('result');
+      $result.textContent = text;
+      $start.append($result);
+      // 이벤트 없애기
+      $table.removeEventListener('click', callback);
+
+      // timeout 없애기
+      clearTimeout(computer);
+
+      // 다시하기 버튼
+      const $btn = document.createElement('button');
+      $btn.innerText = '다시 하기';
+      $btn.addEventListener('click', reset);
+      $start.append($btn);
+    }
+
+    // 테이블 만들기
+    const $table = document.createElement('table');
+    const makeTable = () => {
+      for(let i=0; i<3; i++) {
+        const $tr = document.createElement('tr');
+        const cells = [];
+        
+        for(let j=0; j<3; j++) {
+          const $td = document.createElement('td');
+          cells.push($td);
+          $tr.append($td);
+        }
+        $table.append($tr);
+        rows.push(cells);
+      }
+      $table.addEventListener('click', callback);
+      $start.append($table);
+    }
+    
+    const reset = () => {
+      $ready.classList.remove('hidden');
+      $start.classList.add('hidden');
+
+      turn = 'O';
+      rows = [];
+      $start.innerHTML = '';
+      $table.innerHTML = '';
+    }
+    
+    const startGame = (isOne) => {
+      this.isOne = isOne;
+      $ready.classList.add('hidden');
+      $start.classList.remove('hidden');
+      makeTable();
+    }
+
+    const startOneBtn = document.querySelector('.startOneBtn');
+    const startTwoBtn = document.querySelector('.startTwoBtn');
+    startOneBtn.addEventListener('click', () => startGame(0))
+    startTwoBtn.addEventListener('click', () => startGame(1))
+    reset();
+  </script>
+</body>
+</html>
