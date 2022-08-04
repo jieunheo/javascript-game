@@ -1,0 +1,92 @@
+* {
+  box-sizing: border-box;
+}
+
+html, body, h1, h2, p, input, button, ul, li {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: rgb(229, 250, 226);
+}
+
+.container {
+  width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
+ul, li {
+  list-style: none;
+}
+
+.hidden {
+  display: none;
+}
+
+.h1 {
+  padding: 30px;
+}
+
+.description {
+  margin-bottom: 20px;
+}
+
+button {
+  border: none;
+  background-color: rgb(105, 185, 94);
+  padding: 10px 20px;
+  color: #fff;
+  box-shadow: 0 2px 5px 2px rgba(18, 35, 66, 0.2);
+}
+
+button:hover {
+  background-color: rgb(71, 201, 54);
+}
+
+#startBtn {
+  width: 150px;
+  border-radius: 16px;
+}
+
+.h2 {
+  padding: 30px;
+}
+
+#form {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 50px;
+}
+
+.form input {
+  padding: 10px 20px;
+  border-radius: 8px 0 0 8px;
+}
+
+.form button {
+  border-radius: 0 8px 8px 0;
+}
+
+.list li {
+  font-size: 1.1rem;
+  background-color: #fff;
+  width: 70%;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 20px 30px;
+  border-radius: 16px;
+  box-shadow: 0 3px 10px 1px rgba(0, 0, 0, 0.2);
+}
+
+.list li + li {
+  margin-top: 16px;
+}
+
+.result {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 16px;
+}

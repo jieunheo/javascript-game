@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Number Baseball Game</title>
+
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <h1 class="h1">Number Baseball Game</h1>
+    </header>
+    <main class="main">
+      <div class="ready">
+        <p class="description">4자리 숫자를 맞추세요!</p>
+        <button id="startBtn">게임 시작</button>
+      </div>
+
+      <div class="start hidden">
+        <h2 class="h2">남은 기회 <span id="myCount">10</span>회</h2>
+        <div class="form">
+          <form id="form">
+            <input type="number" minlength="4" maxlength="4" pattern="^(?!.*(.).*\1)\d{4}$">
+            <button type="submit">정답!</button>
+          </form>
+        </div>
+        <ul class="list"></ul>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const ready = document.querySelector('.ready');
+    const start = document.querySelector('.start');
+    const list = document.querySelector('.list');
+    const myCount = document.querySelector('#myCount');
+
+    let numbers = [];
+    let answer = [];
+    let tries = [];
+    let count = 10;
+    let out = 0;
+
+    const reset = () => {
+      numbers = [];
+      answer = [];
+      tries = [];
+
+      count = 10;
+
+      strike = 0;
+      ball = 0;
+      out = 0;
+
+      for(let i = 0; i < 9; i++) {
+        numbers.push(i + 1);
+      }
+  
+      for(let i = 0; i < 4; i++) {
+        const index = Math.floor(Math.random() * (numbers.length - i));
+        answer.push(numbers[index]);
+        numbers.splice(index, 1);
+      }
+    }
+
+    const gameStart = () => {
+      ready.classList.add('hidden');
+      start.classList.remove('hidden');
+      reset();
+    }
+
+    const putNumber = (event) => {
+      event.preventDefault();
+
+      const number = event.target[0].value;
+      event.target[0].value = '';
+      const valid = checkNumber(number);
+      if(!valid) { return };
+      
+      if(answer.join('') === number) {
+        alertMessage(`홈런!`);
+        return;
+      }
+      
+      let strike = 0;
+      let ball = 0;
+      
+      for(let i = 0; i < answer.length; i++) {
+        const index = number.indexOf(answer[i]);
+        
+        if(index > -1) {
+          if(index === i) {
+            strike++;
+          } else {
+            ball++;
+          }
+        }
+      }
+      
+      const li = document.createElement('li');
+      li.innerHTML = `<p class='result'>${strike} 스트라이크 ${ball} 볼</p><p>${number}<p>`;
+      list.prepend(li);
+      tries.push(number);
+      if(strike === 0 && ball === 0) {
+        out++;
+        console.log(`아웃! ${out}회`);
+      }
+
+      if(out === 3) {
+        alertMessage(`삼진 아웃!! 정답은 ${answer.join('')}`);
+        return;
+      }
+      count--;
+      
+      myCount.textContent = count;
+      if (count === 0) {
+        alertMessage(`패배!! 정답은 ${answer.join('')}`);
+        return;
+      }
+    }
+
+    const alertMessage = (msg) => {
+        alert(msg);
+        window.location.reload();
+    }
+
+    const checkNumber = (number) => {
+      if (number.length !== 4) { // 길이는 4가 아닌가
+        return alert('4자리 숫자를 입력해 주세요.');
+      }
+      if (new Set(number).size !== 4) { // 중복된 숫자가 있는가
+        return alert('중복되지 않게 입력해 주세요.');
+      }
+      if (tries.includes(number)) { // 이미 시도한 값은 아닌가
+        return alert('이미 시도한 값입니다.');
+      }
+      return true;
+    }
+
+    const startBtn = document.querySelector('#startBtn');
+    startBtn.addEventListener('click', gameStart);
+    const form = document.querySelector('#form');
+    form.addEventListener('submit', putNumber);
+  </script>
+</body>
+</html>
