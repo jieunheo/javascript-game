@@ -45,6 +45,7 @@
       OPENED: 0, // 0 이상이면 모두 열린 칸
     }
     let data;
+    let openCount = 0;
 
     const plantMine = () => {
       // 전체 칸 만들어 순서대로 숫자 넣기
@@ -141,6 +142,41 @@
       return count;
     }
 
+    const open = (rowIndex, cellIndex) => {
+      // 열린 칸은 다시 열지 않기
+      if (data[rowIndex]?.[cellIndex] >= CODE.OPENED) return;
+
+      const target = $tbody.children[rowIndex]?.children[cellIndex];
+      
+      // 열을 값이 없다면 return
+      if (!target) return;
+
+      const count = countMine(rowIndex, cellIndex);
+      target.textContent = count || '';
+      target.className = 'opened';
+      data[rowIndex][cellIndex] = count;
+
+      openCount++;
+      console.log(openCount);
+      return count;
+    }
+
+    const openAround = (rI, cI) => {
+      const count = open(rI, cI);
+
+      // 주변 count값이 0인 경우 또 열어주기
+      if (count === 0) {
+        openAround(rI - 1, cI - 1);
+        openAround(rI - 1, cI);
+        openAround(rI - 1, cI + 1);
+        openAround(rI, cI - 1);
+        openAround(rI, cI + 1);
+        openAround(rI + 1, cI - 1);
+        openAround(rI + 1, cI);
+        openAround(rI + 1, cI + 1);
+      }
+    }
+
     const onLeftClick = (event) => {
       const target = event.target;
       const rowIndex = target.parentNode.rowIndex;
@@ -149,10 +185,7 @@
       const cellData = data[rowIndex][cellIndex];
       if(cellData === CODE.NORMAL) {
         // 닫힌 칸
-        const count = countMine(rowIndex, cellIndex);
-        target.textContent = count || '';
-        target.className = 'opened';
-        data[rowIndex][cellIndex] = count;
+        openAround(rowIndex, cellIndex);
 
       } else if(cellData === CODE.MINE) {
         // 지뢰 클릭 게임 끝
