@@ -47,19 +47,20 @@
     let data;
 
     const plantMine = () => {
-      // 전체 칸 만들기
+      // 전체 칸 만들어 순서대로 숫자 넣기
       const candidate = Array(row * cell).fill().map((arr, i) => {
         return i;
       });
 
       // 섞기
       const shuffle = [];
-      while (candidate.length > row * cell - mine) {
+      while (candidate.length > row * cell - mine) { // 100개에서 90개가 될 때 까지
+        // 전체에서 랜덤한 값을 추출하기
         const chosen = candidate.splice(Math.floor(Math.random() * candidate.length), 1)[0];
         shuffle.push(chosen);
       }
 
-      // 전체 값
+      // 전체 값을 NORMAL 값으로 채우기
       const data = [];
       for (let i = 0; i < row; i++) {
         // 한 줄
@@ -81,6 +82,89 @@
       return data;
     };
 
+    const onRightClick = (event) => {
+      event.preventDefault();
+
+      const target = event.target;
+      const rowIndex = target.parentNode.rowIndex;
+      const cellIndex = target.cellIndex;
+
+      const cellData = data[rowIndex][cellIndex];
+      if (cellData === CODE.MINE) { // 지뢰면
+        data[rowIndex][cellIndex] = CODE.QUESTION_MINE; // 물음표 지뢰로
+        target.className = 'question';
+        target.textContent = '?';
+      } else if (cellData === CODE.QUESTION_MINE) { // 물음표 지뢰면
+        data[rowIndex][cellIndex] = CODE.FLAG_MINE; // 깃발 지뢰로
+        target.className = 'flag';
+        target.textContent = '!';
+      } else if (cellData === CODE.FLAG_MINE) { // 깃발 지뢰면
+        data[rowIndex][cellIndex] = CODE.MINE; // 지뢰로
+        target.className = '';
+        target.textContent = 'X';
+      } else if (cellData === CODE.NORMAL) { // 닫힌 칸이면
+        data[rowIndex][cellIndex] = CODE.QUESTION; // 물음표로
+        target.className = 'question';
+        target.textContent = '?';
+      } else if (cellData === CODE.QUESTION) { // 물음표면
+        data[rowIndex][cellIndex] = CODE.FLAG; // 깃발으로
+        target.className = 'flag';
+        target.textContent = '!';
+      } else if (cellData === CODE.FLAG) { // 깃발이면
+        data[rowIndex][cellIndex] = CODE.NORMAL; // 닫힌 칸으로
+        target.className = '';
+        target.textContent = '';
+      }
+    }
+
+    const countMine = (rowIndex, cellIndex) => {
+      const mines = [CODE.MINE, CODE.QUESTION_MINE, CODE.FLAG_MINE];
+      let count = 0;
+
+      for(let i = (rowIndex - 1); i <= (rowIndex + 1); i++) {
+        for(let j = (cellIndex - 1); j <= (cellIndex + 1); j++) {
+          mines.includes(data[i]?.[j]) && count++; // ?. 옵셔널 체이닝(optional chaining) 연산자
+        }
+      }
+
+      /* // for문 대신 사용 가능
+      mines.includes(data[rowIndex - 1]?.[cellIndex - 1]) && count++;
+      mines.includes(data[rowIndex - 1]?.[cellIndex]) && count++;
+      mines.includes(data[rowIndex - 1]?.[cellIndex + 1]) && count++;
+      mines.includes(data[rowIndex][cellIndex - 1]) && count++;
+      mines.includes(data[rowIndex][cellIndex + 1]) && count++;
+      mines.includes(data[rowIndex + 1]?.[cellIndex - 1]) && count++;
+      mines.includes(data[rowIndex + 1]?.[cellIndex]) && count++;
+      mines.includes(data[rowIndex + 1]?.[cellIndex + 1]) && count++;
+      */
+
+      return count;
+    }
+
+    const onLeftClick = (event) => {
+      const target = event.target;
+      const rowIndex = target.parentNode.rowIndex;
+      const cellIndex = target.cellIndex;
+
+      const cellData = data[rowIndex][cellIndex];
+      if(cellData === CODE.NORMAL) {
+        // 닫힌 칸
+        const count = countMine(rowIndex, cellIndex);
+        target.textContent = count || '';
+        target.className = 'opened';
+        data[rowIndex][cellIndex] = count;
+
+      } else if(cellData === CODE.MINE) {
+        // 지뢰 클릭 게임 끝
+        target.textContent = '펑';
+        target.className = 'opened';
+
+        // 이벤트 리스너 삭제
+        $tbody.removeEventListener('contextmenu', onRightClick);
+        $tbody.removeEventListener('click', onLeftClick);
+
+      }
+    }
 
     const makeTable = () => {
       $tbody.innerHTML = '';
@@ -93,10 +177,12 @@
         row.forEach((cell) => {
           const $td = document.createElement('td');
           if (cell === CODE.MINE) {
-            $td.textContent = 'X'; // 개발 편의를 위해
+            $td.textContent = '*'; // 개발 편의를 위해
           }
           $tr.append($td);
         });
+        $tbody.addEventListener('contextmenu', onRightClick);
+        $tbody.addEventListener('click', onLeftClick);
         $tbody.append($tr);
       });
     };
