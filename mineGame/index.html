@@ -14,10 +14,15 @@
     <h1>지뢰 찾기</h1>
     <div id="ready">
       <p>지뢰 찾기를 해봅시다</p>
-      <button id="start-btn">시작</button>
+      <form id="form">
+        <input placeholder="가로 줄" id="row" size="5" />
+        <input placeholder="세로 줄" id="cell" size="5" />
+        <input placeholder="지뢰" id="mine" size="5" />
+        <button id="start-btn">시작</button>
+      </form>
     </div>
   
-    <div id="start">
+    <div id="start" class="hidden">
       <div id="timer">0초</div>
       <table id="table">
         <tbody></tbody>
@@ -29,14 +34,15 @@
   <script>
     const $ready = document.querySelector('#ready');
     const $start = document.querySelector('#start');
+    const $form  = document.querySelector('#form');
 
     const $timer  = document.querySelector('#timer');
     const $tbody  = document.querySelector('#table tbody');
     const $result = document.querySelector('#result');
 
-    const row  = 10; // 줄
-    const cell = 10; // 칸
-    const mine = 10; // 지뢰수
+    let row;  // 줄
+    let cell; // 칸
+    let mine; // 지뢰수
     const CODE = {
       NORMAL: -1,
       QUESTION: -2,
@@ -49,7 +55,7 @@
     let data; // 지뢰 맵
     let openCount = 0; // 열은 수
 
-    let startTime = new Date(); // 게임 시작 시간
+    let startTime; // 게임 시작 시간
     let interval;
 
     const plantMine = () => {
@@ -107,7 +113,8 @@
       } else if (cellData === CODE.FLAG_MINE) { // 깃발 지뢰면
         data[rowIndex][cellIndex] = CODE.MINE; // 지뢰로
         target.className = '';
-        target.textContent = 'X';
+        // target.textContent = 'X';
+        target.textContent = '';
       } else if (cellData === CODE.NORMAL) { // 닫힌 칸이면
         data[rowIndex][cellIndex] = CODE.QUESTION; // 물음표로
         target.className = 'question';
@@ -167,6 +174,7 @@
       // 승리한 경우
       if (openCount === row * cell - mine) {
         endGame(`성공`);
+        clearInterval(interval);
       }
       return count;
     }
@@ -181,7 +189,8 @@
       $tbody.removeEventListener('click', onLeftClick);
 
       $result.innerHTML = `<p>${result}했습니다. ${time}초가 걸렸습니다.</p>`;
-      $result.append(button);
+      $result.append($replay);
+      $result.append($reset);
     }
 
     const openAround = (rI, cI) => {
@@ -227,16 +236,15 @@
     const makeTable = () => {
       $tbody.innerHTML = '';
       data = plantMine();
-      console.log(data);
 
       data.forEach(row => {
         const $tr = document.createElement('tr');
 
         row.forEach((cell) => {
           const $td = document.createElement('td');
-          if (cell === CODE.MINE) {
-            $td.textContent = '*'; // 개발 편의를 위해
-          }
+          // if (cell === CODE.MINE) {
+          //   $td.textContent = '*'; // 개발 편의를 위해
+          // }
           $tr.append($td);
         });
         $tbody.addEventListener('contextmenu', onRightClick);
@@ -245,7 +253,24 @@
       });
     };
 
-    function startGame() {
+    const startGame = (event) => {
+      if(event) event.preventDefault();
+
+      startTime = new Date();
+      row  = $form.querySelectorAll('input')[0].value;
+      cell = $form.querySelectorAll('input')[1].value;
+      mine = $form.querySelectorAll('input')[2].value;
+      // row = parseInt(event.target.row.value);
+      // cell = parseInt(event.target.cell.value);
+      // mine = parseInt(event.target.mine.value);
+
+      if(!row && !cell && !mine) {
+        alert(`입력 상자가 비어있습니다.`);
+        return;
+      }
+
+      $ready.classList.add('hidden');
+      $start.classList.remove('hidden');
       makeTable();
 
       interval = setInterval(() => {
@@ -254,7 +279,7 @@
       }, 1000);
     }
 
-    function resetGame() {
+    const resetGame = () => {
       data; // 지뢰 맵
       openCount = 0; // 열은 수
       startTime = new Date(); // 게임 시작 시간
@@ -263,13 +288,21 @@
       startGame();
     }
     
+    const mainPage = () => {
+      $ready.classList.remove('hidden');
+      $start.classList.add('hidden');
 
-    const $startBtn = document.querySelector('#start-btn');
-    $startBtn.addEventListener('click', startGame);
+      openCount = 0; // 열은 수
+    }
 
-    const button = document.createElement('button');
-    button.addEventListener('click', resetGame);
-    button.textContent = '다시하기';
+    $form.addEventListener('submit', startGame);
+
+    const $replay = document.createElement('button');
+    $replay.addEventListener('click', resetGame);
+    $replay.textContent = '다시하기';
+    const $reset = document.createElement('button');
+    $reset.addEventListener('click', mainPage);
+    $reset.textContent = '메인화면';
   </script>
 </body>
 </html>

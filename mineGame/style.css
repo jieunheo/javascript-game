@@ -21,9 +21,9 @@ body {
   text-align: center;
 }
 
-/* .hidden {
+.hidden {
   display: none;
-} */
+}
 
 h1 {
   padding: 60px;
@@ -45,6 +45,10 @@ button:hover {
   background-color: rgb(88, 130, 182);
 }
 
+button + button {
+  margin-left: 20px;
+}
+
 #ready p {
   margin-bottom: 20px;
 }
@@ -57,6 +61,7 @@ table {
   margin-left: auto;
   margin-right: auto;
   border-collapse: collapse;
+  margin-bottom: 30px;
 }
 
 td {
@@ -74,4 +79,8 @@ td.question { background: orange; }
 
 input {
   width: 100px;
+}
+
+#result p {
+  margin-bottom: 20px;
 }
