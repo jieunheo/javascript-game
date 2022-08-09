@@ -7,6 +7,10 @@ html, body, h1, h2, p, input, button {
   padding: 0;
 }
 
+body {
+  background-color: #585858;
+}
+
 .container {
   width: 300px;
   margin-left: auto;
@@ -16,6 +20,7 @@ html, body, h1, h2, p, input, button {
 .h1 {
   text-align: center;
   padding: 30px;
+  color: #fff;
 }
 
 .result {
@@ -33,6 +38,11 @@ html, body, h1, h2, p, input, button {
   width: 75%;
   height: 50px;
   text-align: right;
+}
+
+.cal {
+  overflow: hidden;
+  border-radius: 8px;
 }
 
 #operator {
