@@ -30,6 +30,10 @@ ul, li {
   padding: 30px;
 }
 
+.h2 {
+  font-size: 1.3rem;
+}
+
 .description {
   margin-bottom: 20px;
 }
@@ -43,7 +47,7 @@ button {
   background-color: rgb(255, 107, 218);
   color: #fff;
   padding: 10px 20px;
-  box-shadow: 0 2px 5px 2px rgba(18, 35, 66, 0.2);
+  box-shadow: 0 2px 5px rgba(18, 35, 66, 0.2);
   width: 100px;
   border-radius: 16px;
 }
