@@ -4,22 +4,101 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+  <title>Game List</title>
+  <link rel="stylesheet" href="./style.css">
 </head>
 <body>
-  <!--API iframe-->
-  <iframe frameborder="0" id="srvyIframe" src="https://maumbora.or.kr/decoboard/inc/survey/?k=OLEAPAIY_20220630152749" scrolling="no"></iframe>
-  <!--//API iframe-->
+  <div class="container">
+    <header>
+      <h1>Jeheo</h1>
+    </header>
 
-  <!--iframe height-->
-  <script type="text/javascript">
-    window.onload = function() {
-      window.addEventListener("message", function(e) {
-        document.getElementById("srvyIframe").height = e.data.scrollHeight;
-        
-      });
-    };
-  </script>
-  <!--//iframe height-->
+    <main>
+      <ul class="game-list">
+        <li class="game">
+          <a href="/weader/">weader api</a>
+          <p>
+            <span class="html">html</span> <span class="css">css</span> <span class="js">javascript</span>
+          </p>
+        </li>
+        <li class="game">
+          <a href="/calculator/">calculator</a>
+          <p>
+            <span class="html">html</span> <span class="css">css</span> <span class="js">javascript</span>
+          </p>
+        </li>
+        <li class="game">
+          <a href="/lotto/">lotto game</a>
+          <p>
+            <span class="html">html</span> <span class="css">css</span> <span class="js">javascript</span>
+          </p>
+        </li>
+        <li class="game">
+          <a href="/blockGame/">block game</a>
+          <p>
+            <span class="html">html</span> <span class="css">css</span> <span class="js">javascript</span>
+          </p>
+        </li>
+        <li class="game">
+          <a href="/upDownNumber/">up down number game</a>
+          <p>
+            <span class="html">html</span> <span class="css">css</span> <span class="js">javascript</span>
+          </p>
+        </li>
+        <li class="game">
+          <a href="/rockPaperScissors/">rock paper scissors game</a>
+          <p>
+            <span class="html">html</span> <span class="css">css</span> <span class="js">javascript</span>
+          </p>
+        </li>
+        <li class="game">
+          <a href="/numberBaseball/">number baseball game</a>
+          <p>
+            <span class="html">html</span> <span class="css">css</span> <span class="js">javascript</span>
+          </p>
+        </li>
+        <li class="game">
+          <a href="/responseCheck/">response check</a>
+          <p>
+            <span class="html">html</span> <span class="css">css</span> <span class="js">javascript</span>
+          </p>
+        </li>
+        <li class="game">
+          <a href="/ticTacToe/">tic tac toe game</a>
+          <p>
+            <span class="html">html</span> <span class="css">css</span> <span class="js">javascript</span>
+          </p>
+        </li>
+        <li class="game">
+          <a href="/wordGame/">word game</a>
+          <p>
+            <span class="html">html</span> <span class="css">css</span> <span class="js">javascript</span>
+          </p>
+        </li>
+        <li class="game">
+          <a href="/rpg/">text rpg game</a>
+          <p>
+            <span class="html">html</span> <span class="css">css</span> <span class="js">javascript</span>
+          </p>
+        </li>
+        <li class="game">
+          <a href="/cardGame2/">card game</a>
+          <p>
+            <span class="html">html</span> <span class="css">css</span> <span class="js">javascript</span>
+          </p>
+        </li>
+        <li class="game">
+          <a href="/mineGame/">mine game</a>
+          <p>
+            <span class="html">html</span> <span class="css">css</span> <span class="js">javascript</span>
+          </p>
+        </li>
+      </ul>
+    </main>
+
+    <footer>
+      <small>2022. copyright jieun all.</small>
+    </footer>
+  </div>
 </body>
 </html>
