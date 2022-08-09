@@ -58,6 +58,10 @@
     let startTime; // 게임 시작 시간
     let interval;
 
+    let normalCellFound = false; // 기본 칸 선택
+    let searched;
+    let firstClick = true; // 처음 클릭
+
     const plantMine = () => {
       // 전체 칸 만들어 순서대로 숫자 넣기
       const candidate = Array(row * cell).fill().map((arr, i) => {
@@ -192,6 +196,31 @@
       $result.append($replay);
       $result.append($reset);
     }
+    
+    const transferMine = (rI, cI) => {
+      if (normalCellFound) return; // 이미 빈칸을 찾았으면 종료
+
+      if (rI < 0 || rI >= row || cI < 0 || cI >= cell) return;
+
+      if (searched[rI][cI]) return; //이미 찾은 칸이면 종료
+
+      if (data[rI][cI] === CODE.NORMAL) { //빈칸인 경우
+        normalCellFound = true;
+        data[rI][cI] = CODE.MINE;
+
+      } else { //지뢰 칸인 경우 8방향 탐색
+        searched[rI][cI] = true;
+        transferMine(rI - 1, cI - 1);
+        transferMine(rI - 1, cI);
+        transferMine(rI - 1, cI + 1);
+        transferMine(rI, cI - 1);
+        transferMine(rI, cI + 1);
+        transferMine(rI + 1, cI - 1);
+        transferMine(rI + 1, cI);
+        transferMine(rI + 1, cI + 1);
+
+      }
+    }
 
     const openAround = (rI, cI) => {
       const count = open(rI, cI);
@@ -215,13 +244,25 @@
       const rowIndex = target.parentNode.rowIndex;
       const cellIndex = target.cellIndex;
 
-      const cellData = data[rowIndex][cellIndex];
+      let cellData = data[rowIndex][cellIndex];
+      if (firstClick) { // 처음 클릭
+        firstClick = false;
+
+        searched = Array(row).fill().map(() => []);
+        if (cellData === CODE.MINE) { //첫 클릭이 지뢰면
+          transferMine(rowIndex, cellIndex); //지뢰 옮기기
+          data[rowIndex][cellIndex] = CODE.NORMAL; //지금 칸을 빈칸으로
+          cellData = CODE.NORMAL;
+        }
+      }
+
       if(cellData === CODE.NORMAL) {
         // 닫힌 칸
         openAround(rowIndex, cellIndex);
 
       } else if(cellData === CODE.MINE) {
         // 지뢰 클릭 게임 끝
+        showMine();
         target.textContent = '펑';
         target.className = 'opened';
         endGame(`실패`);
@@ -256,23 +297,28 @@
     const startGame = (event) => {
       if(event) event.preventDefault();
 
-      startTime = new Date();
+      clearInterval(interval);
       row  = $form.querySelectorAll('input')[0].value;
       cell = $form.querySelectorAll('input')[1].value;
       mine = $form.querySelectorAll('input')[2].value;
       // row = parseInt(event.target.row.value);
       // cell = parseInt(event.target.cell.value);
       // mine = parseInt(event.target.mine.value);
-
+      
       if(!row && !cell && !mine) {
         alert(`입력 상자가 비어있습니다.`);
         return;
       }
-
+      
       $ready.classList.add('hidden');
       $start.classList.remove('hidden');
       makeTable();
-
+      
+      normalCellFound = false;
+      searched = null;
+      firstClick = true;
+      
+      startTime = new Date();
       interval = setInterval(() => {
         const time = Math.floor((new Date() - startTime) / 1000);
         $timer.textContent = `${time}초`;
@@ -293,6 +339,18 @@
       $start.classList.add('hidden');
 
       openCount = 0; // 열은 수
+    }
+
+    const showMine = () => {
+      // 지뢰 위치 확인
+      const mines = [CODE.MINE, CODE.QUESTION_MINE, CODE.FLAG_MINE];
+      data.forEach((row, rowIndex) => {
+        row.forEach((cell, cellIndex) => {
+          if (mines.includes(cell)) {
+            $tbody.children[rowIndex].children[cellIndex].textContent = 'X';
+          }
+        });
+      });
     }
 
     $form.addEventListener('submit', startGame);
