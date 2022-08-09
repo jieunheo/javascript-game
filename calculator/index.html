@@ -102,8 +102,13 @@
       //     break;
       //   default: break;
       // }
-      $result.value = eval(numOne + operator + numTwo);
-      numOne = eval(numOne + operator + numTwo);
+      if(operator === '/' && numTwo === '0') {
+        $result.value = 0;
+        numOne = 0;
+      } else {
+        $result.value = eval(numOne + operator + numTwo);
+        numOne = eval(numOne + operator + numTwo);
+      }
       numTwo = '';
       operator = '';
       $operator.value = '';
