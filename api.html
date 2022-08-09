@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <!--API iframe-->
+  <iframe frameborder="0" id="srvyIframe" src="https://maumbora.or.kr/decoboard/inc/survey/?k=OLEAPAIY_20220630152749" scrolling="no"></iframe>
+  <!--//API iframe-->
+
+  <!--iframe height-->
+  <script type="text/javascript">
+    window.onload = function() {
+      window.addEventListener("message", function(e) {
+        document.getElementById("srvyIframe").height = e.data.scrollHeight;
+        
+      });
+    };
+  </script>
+  <!--//iframe height-->
+</body>
+</html>
